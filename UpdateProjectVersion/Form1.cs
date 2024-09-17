@@ -10,6 +10,7 @@ namespace UpdateProjectVersion
         public Form1()
         {
             InitializeComponent();
+            Text = "Update Project Version v(0.1.4)";
         }
 
         private void btnSelectFolder_Click(object sender, EventArgs e)
@@ -169,6 +170,12 @@ namespace UpdateProjectVersion
         {
             btnGetVersion_Click(sender, e);
             btnScan_Click(sender, e);
+        }
+
+        private void btnClearAll_Click(object sender, EventArgs e)
+        {
+            lbVersionFiles.ClearSelected();
+            lbVersionFiles.Refresh();
         }
     }
 }

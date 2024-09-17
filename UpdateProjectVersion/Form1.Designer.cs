@@ -168,6 +168,7 @@
             // rbMatchingVersion
             // 
             this.rbMatchingVersion.AutoSize = true;
+            this.rbMatchingVersion.Checked = true;
             this.rbMatchingVersion.Location = new System.Drawing.Point(19, 78);
             this.rbMatchingVersion.Name = "rbMatchingVersion";
             this.rbMatchingVersion.Size = new System.Drawing.Size(97, 17);
@@ -183,7 +184,6 @@
             this.rbAnyVersion.Name = "rbAnyVersion";
             this.rbAnyVersion.Size = new System.Drawing.Size(81, 17);
             this.rbAnyVersion.TabIndex = 15;
-            this.rbAnyVersion.TabStop = true;
             this.rbAnyVersion.Text = "Any Version";
             this.rbAnyVersion.UseVisualStyleBackColor = true;
             // 
@@ -203,6 +203,7 @@
             this.btnClearAll.TabIndex = 17;
             this.btnClearAll.Text = "Clear all";
             this.btnClearAll.UseVisualStyleBackColor = true;
+            this.btnClearAll.Click += new System.EventHandler(this.btnClearAll_Click);
             // 
             // Form1
             // 
