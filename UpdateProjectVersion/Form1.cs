@@ -88,20 +88,31 @@ namespace UpdateProjectVersion
         private void btnFindTargets_Click(object sender, EventArgs e)
         {
             int UpdatedCount = 0;
-            for (int index=0; index < lbVersionFiles.CheckedItems.Count; index++)
+            if (string.IsNullOrEmpty(textNewVersion.Text))
             {
-                if (lbVersionFiles.GetSelected(index))
+                MessageBox.Show("First enter new version!");
+                return;
+            }
+            for (int index=0; index < lbVersionFiles.Items.Count; index++)
+            {
+                if (lbVersionFiles.GetItemChecked(index))
                 {
                     string file = lbVersionFiles.Items[index].ToString();
-                    UpdateVersion(file, textNewVersion, Text);
-                    UpdatedCount++;
+                    if (UpdateVersion(file, textNewVersion, Text))
+                    {
+                        UpdatedCount++;
+                    }
+                }
+                else
+                {
+
                 }
             }
             MessageBox.Show($"Updated [{UpdatedCount}] files");
             lbVersionFiles.ClearSelected();
         }
 
-        private void UpdateVersion(string file, TextBox textNewVersion, string fileName)
+        private bool UpdateVersion(string file, TextBox textNewVersion, string fileName)
         {
             int step = 10;
             try
@@ -109,7 +120,7 @@ namespace UpdateProjectVersion
                 if (rbMatchingVersion.Checked && textNewVersion.Text == "")
                 {
                     MessageBox.Show("First enter new version!");
-                    return;
+                    return false;
                 }
                 string backupCopy = file + ".bak";
                 step = 20;
@@ -124,6 +135,7 @@ namespace UpdateProjectVersion
                 step = 40;
                 List<string> linesOut = new List<string>();
                 step = 50;
+                bool updated = false;
                 foreach (string line in linesIn)
                 {
                     step = 60;
@@ -134,11 +146,13 @@ namespace UpdateProjectVersion
                         if (rbMatchingVersion.Checked)
                         {
                             lineUpdate = line.Replace(textCurrentVersion.Text, textNewVersion.Text);
+                            updated = true;
                         }
                         else
                         {
                             string currentVersion = GetCurrentVersionString(line);
-                            lineUpdate = line.Replace(textCurrentVersion.Text, textNewVersion.Text);
+                            lineUpdate = line.Replace(currentVersion, textNewVersion.Text);
+                            updated = true;
                         }
                         linesOut.Add(lineUpdate);
                     }
@@ -150,6 +164,7 @@ namespace UpdateProjectVersion
                 }
                 step = 90;
                 File.WriteAllLines(file, linesOut.ToArray());
+                return updated;
             }
             catch (Exception ex)
             {
