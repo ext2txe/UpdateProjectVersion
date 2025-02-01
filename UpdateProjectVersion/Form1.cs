@@ -7,10 +7,18 @@ namespace UpdateProjectVersion
 {
     public partial class Form1 : Form
     {
+        private UpvSettings _settings;
+        private bool _isStarting = true;
         public Form1()
         {
             InitializeComponent();
-            Text = "Update Project Version v(0.1.4)";
+            _settings = new UpvSettings("upvsettings.ini");
+            Text = "Update Project Version v(0.1.8)";
+            if (File.Exists(_settings.MyBaseFolder))
+            {
+                textBaseFolder.Text = _settings.MyBaseFolder;
+                textTargetFileName.Text = _settings.MyTargetFile;
+            }
         }
 
         private void btnSelectFolder_Click(object sender, EventArgs e)
@@ -54,11 +62,21 @@ namespace UpdateProjectVersion
 
         private void textBaseFolder_TextChanged(object sender, EventArgs e)
         {
-
+            if (_isStarting)
+            {
+                return;
+            }
+            _settings.MyBaseFolder = textBaseFolder.Text;
         }
 
         private void btnScan_Click(object sender, EventArgs e)
         {
+            if (Directory.Exists(textBaseFolder.Text) == false)
+            {
+                MessageBox.Show($"No valid folder [{textBaseFolder.Text}]", "General unhappiness in the valleyh of UpdateProjectVersion");
+                return;
+            }
+
             lbVersionFiles.Items.Clear();
             string target = Path.GetFileName(textTargetFileName.Text);
             string[] files = Directory.GetFiles(textBaseFolder.Text, target,SearchOption.AllDirectories);
@@ -72,17 +90,14 @@ namespace UpdateProjectVersion
 
         private void btnGetVersion_Click(object sender, EventArgs e)
         {
-            //OpenFileDialog ofd = new OpenFileDialog();
-            //ofd.FileName = textTargetFileName.Text;
-            //if (ofd.ShowDialog() == DialogResult.OK)
-            //{
-            //    textTargetFileName.Text = ofd.FileName; ;
-            //    textTargetFileName.Refresh();
             if (File.Exists(textTargetFileName.Text))
             {
                 textCurrentVersion.Text = GetCurrentVersion(textTargetFileName.Text);
             }
-            //}
+            else
+            {
+                MessageBox.Show($"No valid target file name [{textTargetFileName.Text}]", "General unhappiness in the valleyh of UpdateProjectVersion");
+            }
         }
 
         private void btnFindTargets_Click(object sender, EventArgs e)
@@ -185,12 +200,18 @@ namespace UpdateProjectVersion
         {
             btnGetVersion_Click(sender, e);
             btnScan_Click(sender, e);
+            _isStarting = false;
         }
 
         private void btnClearAll_Click(object sender, EventArgs e)
         {
             lbVersionFiles.ClearSelected();
             lbVersionFiles.Refresh();
+        }
+
+        private void textTargetFileName_TextChanged(object sender, EventArgs e)
+        {
+            _settings.MyTargetFile = textTargetFileName.Text;
         }
     }
 }

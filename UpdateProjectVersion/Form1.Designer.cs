@@ -64,7 +64,6 @@
             this.textBaseFolder.Name = "textBaseFolder";
             this.textBaseFolder.Size = new System.Drawing.Size(635, 20);
             this.textBaseFolder.TabIndex = 1;
-            this.textBaseFolder.Text = "d:\\shared\\ABE\\src";
             this.textBaseFolder.TextChanged += new System.EventHandler(this.textBaseFolder_TextChanged);
             // 
             // btnSelectFolder
@@ -97,7 +96,7 @@
             this.textTargetFileName.Name = "textTargetFileName";
             this.textTargetFileName.Size = new System.Drawing.Size(635, 20);
             this.textTargetFileName.TabIndex = 4;
-            this.textTargetFileName.Text = "d:\\shared\\ABE\\src\\ABE\\Properties\\AssemblyInfo.cs";
+            this.textTargetFileName.TextChanged += new System.EventHandler(this.textTargetFileName_TextChanged);
             // 
             // lblTargetFileName
             // 
