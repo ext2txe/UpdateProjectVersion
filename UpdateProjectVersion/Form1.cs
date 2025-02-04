@@ -1,5 +1,7 @@
-﻿using System;
+﻿using ClFramework;
+using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
 
@@ -7,18 +9,40 @@ namespace UpdateProjectVersion
 {
     public partial class Form1 : Form
     {
+        private Project _project;
         private UpvSettings _settings;
         private bool _isStarting = true;
+        string targetProject = "cvsettings";
+
+
         public Form1()
         {
+            _project = new Project();
             InitializeComponent();
-            _settings = new UpvSettings("upvsettings.ini");
-            Text = "Update Project Version v(0.1.8)";
-            if (File.Exists(_settings.MyBaseFolder))
+            string iniFile = MakeTargetSettingsFile();
+
+            _settings = new UpvSettings(iniFile);
+
+            Text = $"Update Project Version v({_project.Version}) Project [{targetProject}]";
+            if (Directory.Exists(_settings.MyBaseFolder))
             {
                 textBaseFolder.Text = _settings.MyBaseFolder;
                 textTargetFileName.Text = _settings.MyTargetFile;
             }
+        }
+
+        private string MakeTargetSettingsFile()
+        {
+            string[] args = Environment.GetCommandLineArgs();
+            if (args.Length > 1)
+            {
+                targetProject = args[1];
+            }
+
+            string fileName = $"{targetProject}.ini";
+            string folder = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+            string path = Path.Combine(folder, "cvsettings", fileName);
+            return path;
         }
 
         private void btnSelectFolder_Click(object sender, EventArgs e)
@@ -102,29 +126,48 @@ namespace UpdateProjectVersion
 
         private void btnFindTargets_Click(object sender, EventArgs e)
         {
-            int UpdatedCount = 0;
-            if (string.IsNullOrEmpty(textNewVersion.Text))
+            int step = 10;
+            try
             {
-                MessageBox.Show("First enter new version!");
-                return;
-            }
-            for (int index=0; index < lbVersionFiles.Items.Count; index++)
-            {
-                if (lbVersionFiles.GetItemChecked(index))
+                int UpdatedCount = 0;
+                step = 20;
+                if (string.IsNullOrEmpty(textNewVersion.Text))
                 {
-                    string file = lbVersionFiles.Items[index].ToString();
-                    if (UpdateVersion(file, textNewVersion, Text))
+                    step = 30;
+                    MessageBox.Show("First enter new version!");
+                    return;
+                }
+                step = 40;
+                for (int index = 0; index < lbVersionFiles.Items.Count; index++)
+                {
+                    step = 50;
+                    if (lbVersionFiles.GetItemChecked(index))
                     {
-                        UpdatedCount++;
+                        step = 60;
+                        string file = lbVersionFiles.Items[index].ToString();
+                        step = 70;
+                        if (UpdateVersion(file, textNewVersion, Text))
+                        {
+                            step = 80;
+                            UpdatedCount++;
+                        }
+                    }
+                    else
+                    {
+                        step = 90;
+
                     }
                 }
-                else
-                {
-
-                }
+                step = 100;
+                MessageBox.Show($"Updated [{UpdatedCount}] files");
+                step = 110;
+                lbVersionFiles.ClearSelected();
             }
-            MessageBox.Show($"Updated [{UpdatedCount}] files");
-            lbVersionFiles.ClearSelected();
+            catch (Exception ex)
+            {
+                string s = $"btnFindTargets_Click() @[{step}] [{ex.Message}]";
+                throw new Exception(s);
+            }
         }
 
         private bool UpdateVersion(string file, TextBox textNewVersion, string fileName)
